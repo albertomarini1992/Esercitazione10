@@ -1,0 +1,130 @@
+<?php
+// 
+// Laboratorio di Basi di dati - 2013/2014
+// Alberto Belussi
+//
+
+// Importo la classe che interagisce con il DBMS e i Bean che vengono utilizzati
+require_once("DBMS.php");
+require_once("CorsoStudiBean.php");
+
+// Recupero i parametri che mi aspetto in input
+// e gestisco l'eventuale mancanza del parametro
+if (is_null($_GET["idDip"])) {
+   echo("Parametro idDip non specificato!");
+   exit;
+} else {
+   $id = $_GET["idDip"];
+}
+
+$dbms = new DBMS();
+?>
+<html>
+<head>
+	<title>Corsi di studio di un dipartimento</title>
+</head>
+<body bgcolor="white">
+<h2>Corsi di studio attivi gestiti dal <i><?=$dbms->getNomeDipart($id)?></i></h2>
+<h3>CORSI DI LAUREA</h3>
+<? 
+$corsi = $dbms->getCorsiLaurea($id);
+
+if (!$corsi) {
+	echo ("<p>Presso il dipartimento non sono attivi corsi di laurea</p>");
+} else {
+?>
+<h2>
+<?   echo("CORSI DI LAUREA:"); ?>
+</h2>
+
+<?
+	foreach($corsi as $cs) { 
+?>
+	<br>
+<?    //cerco le lauree
+    if(($cs->get_Id_tipocs() == 5 || $cs->get_Id_tipocs() == 20 ) &&($cs->get_CreditiTot() > 1 && $cs->get_NumIns() > 1)) {    
+?>
+	<li><b><?=$cs->get_codice() ?></b> - <i><?=$cs->get_nome() ?></i></br>
+
+    	<ul>
+    
+	    <li> <b> 
+		<? echo ("Durata anni:");  ?>
+		</b> <?= $cs->get_Durata() ?> </li>
+
+	    <li> <b> <? echo ("Sede:");  ?> </b> <?= $cs->get_Sede() ?> </li>
+
+	    <li> <b> <? echo ("Presentazione:");  ?></b> <br><br><?= $cs->get_Informativa() ?> </li>
+
+	    <li> <b> <? echo ("Numero insegnamenti attivi nell'anno 2013/2014:");  ?></b> <?= $cs->get_NumIns() ?> </li>
+
+	    <li> <b> <? echo ("Numero totale crediti erogati nell'anno 2013/2014:");  ?></b> <?= $cs->get_CreditiTot() ?> </li>
+
+	</ul>
+
+<? 	}} ?>
+
+
+
+
+<h2> 
+<? echo("CORSI DI LAUREA MAGISTRALE:"); ?> </h2><br>
+
+<?
+	foreach($corsi as $cs) { 
+?>
+
+<?   //cerco le lauree magistrali     
+    if(($cs->get_Id_tipocs() == 25 || $cs->get_Id_tipocs() == 23)  &&($cs->get_CreditiTot() > 1 && $cs->get_NumIns() > 1)) {
+?>
+
+	<li><b><?=$cs->get_codice() ?></b> - <i><?=$cs->get_nome() ?></i></br>
+
+    <ul>
+    
+    <li> <b> <? echo("Durata anni:");?> </b> <?= $cs->get_Durata() ?> </li>
+
+    <li> <b> <? echo("Sede:");?></b> <?= $cs->get_Sede() ?> </li>
+
+    <li> <b> <? echo("Presentazione:");?></b> <br><br><?= $cs->get_Informativa() ?> </li>
+
+    <li> <b> <? echo("Numero insegnamenti attivi nell'anno 2013/2014:");?></b> <?= $cs->get_NumIns() ?> </li>
+
+    <li> <b> <? echo("Numero totale crediti erogati nell'anno 2013/2014:");?></b> <?= $cs->get_CreditiTot() ?> </li>
+
+    </ul>
+        <? }} ?>
+
+
+
+<h2> 
+<? echo("CORSI DI DOTTORATO:"); ?> </h2><br>
+
+<?
+	foreach($corsi as $cs) { 
+
+    //cerco i dottorati
+    if(($cs->get_Id_tipocs() == 14) {
+?>
+
+
+	<li><b><?=$cs->get_codice() ?></b> - <i><?=$cs->get_nome() ?></i></br>
+
+    <ul>
+    
+    <li> <b> <? echo("Durata anni:");?> </b> <?= $cs->get_Durata() ?> </li>
+
+    <li> <b> <? echo("Sede:");?></b> <?= $cs->get_Sede() ?> </li>
+
+    <li> <b> <? echo("Presentazione:");?></b> <br><br><?= $cs->get_Informativa() ?> </li>
+
+    </ul>
+        <? }}} ?>
+
+<?
+}
+$dbms->closeConnection();
+?>
+
+</body>
+</html>
